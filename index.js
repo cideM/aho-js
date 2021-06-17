@@ -97,17 +97,12 @@ dictionary.forEach((w) => {
 // reach the root (which will always be a suffix of every string).
 function findFailureLink(node, needle) {
   // root is the ultimate suffix
-  if (node.value == "") {
-    return node;
-  }
-  // Go to the parent, follow its failure link, and see if *that* node has a
-  // child with the same value as the current node's value. Really, the
-  // Wikipedia image explains it better than any text, so please go there.
-  const found = node.failureLink.children[needle];
-  if (found) {
-    return found;
-  }
-  return findFailureLink(node.parent, needle);
+  return node.value == ""
+    ? node
+    : // Go to the parent, follow its failure link, and see if *that* node has a
+      // child with the same value as the current node's value. Really, the
+      // Wikipedia image explains it better than any text, so please go there.
+      node.failureLink.children[needle] || findFailureLink(node.parent, needle);
 }
 
 function makeAutomaton(trie) {
@@ -197,7 +192,7 @@ function findChild(node, char) {
   const child = node.children[char];
   // and if that doesn't exist, finding its suffix's child, and if that doesn't
   // work, finding its suffix's suffix's child, and so on, finally ending in
-  // the root node if nothing's seen before. 
+  // the root node if nothing's seen before.
   if (!child) {
     if (node.value === "") {
       return node;
